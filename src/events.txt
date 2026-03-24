@@ -1,4 +1,0 @@
-101|Tech Talk|25/04/2025|09:00|Auditorium|1|false
-202|Art Exhibition|10/03/2025|14:00|Gallery|30|false
-1|sport day|12/10/2026|11:11|pretoria|5|false
-203|Awards day|12/10/2026|11:11|pretoria|2|false

@@ -13,7 +13,6 @@ public class Event {
     private String eventTime;   // HH:mm
     private String location;
     private int maxParticipants;
-    private boolean cancelled;
 
     // Registered participants (student IDs)
     private ArrayList<String> registeredStudents;
@@ -28,7 +27,6 @@ public class Event {
         this.eventTime = eventTime;
         this.location = location;
         this.maxParticipants = maxParticipants;
-        this.cancelled = false;
         this.registeredStudents = new ArrayList<>();
         this.waitlist = new LinkedList<>();
     }
@@ -44,8 +42,6 @@ public class Event {
     public String getLocation() { return location; }
     public void setLocation(String location) { this.location = location; }
     public int getMaxParticipants() { return maxParticipants; }
-    public boolean isCancelled() { return cancelled; }
-    public void setCancelled(boolean cancelled) { this.cancelled = cancelled; }
     public ArrayList<String> getRegisteredStudents() { return registeredStudents; }
     public Queue<String> getWaitlist() { return waitlist; }
 
@@ -95,10 +91,9 @@ public class Event {
     @Override
     public String toString() {
         return String.format(
-            "ID: %d | Name: %s | Date: %s | Time: %s | Location: %s | Max: %d | Registered: %d | Waitlist: %d | Status: %s",
+            "ID: %d | Name: %s | Date: %s | Time: %s | Location: %s | Max: %d | Registered: %d | Waitlist: %d",
             eventId, eventName, eventDate, eventTime, location, maxParticipants,
-            registeredStudents.size(), waitlist.size(),
-            cancelled ? "CANCELLED" : "ACTIVE"
+            registeredStudents.size(), waitlist.size()
         );
     }
 }

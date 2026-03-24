@@ -18,8 +18,7 @@ public class DataPersistence {
             for (Event e : events.values()) {
                 // Format: id|name|date|time|location|max|cancelled
                 pw.println(e.getEventId() + "|" + e.getEventName() + "|" + e.getEventDate() + "|"
-                    + e.getEventTime() + "|" + e.getLocation() + "|" + e.getMaxParticipants() + "|"
-                    + e.isCancelled());
+                    + e.getEventTime() + "|" + e.getLocation() + "|" + e.getMaxParticipants());
             }
         }
 
@@ -51,11 +50,10 @@ public class DataPersistence {
                 String line;
                 while ((line = br.readLine()) != null) {
                     String[] parts = line.split("\\|");
-                    if (parts.length == 7) {
+                    if (parts.length >= 6) {
                         int id = Integer.parseInt(parts[0].trim());
                         Event e = new Event(id, parts[1].trim(), parts[2].trim(),
                             parts[3].trim(), parts[4].trim(), Integer.parseInt(parts[5].trim()));
-                        e.setCancelled(Boolean.parseBoolean(parts[6].trim()));
                         events.put(id, e);
                     }
                 }

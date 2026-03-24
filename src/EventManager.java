@@ -40,10 +40,13 @@ public class EventManager {
     /**
      * Updates an existing event's name, time, or location.
      */
-    public void updateEvent(int id, String newName, String newTime, String newLocation) throws Exception {
+    public void updateEvent(int id, String newName, String newDate, String newTime, String newLocation) throws Exception {
         Event e = getEventOrThrow(id);
-        if (e.isCancelled()) throw new Exception("Cannot update a cancelled event.");
         if (newName != null && !newName.trim().isEmpty()) e.setEventName(newName);
+        if (newDate != null && !newDate.trim().isEmpty()) {
+            validateDate(newDate);
+            e.setEventDate(newDate);
+        }
         if (newTime != null && !newTime.trim().isEmpty()) {
             validateTime(newTime);
             e.setEventTime(newTime);
@@ -56,8 +59,7 @@ public class EventManager {
      */
     public void cancelEvent(int id) throws Exception {
         Event e = getEventOrThrow(id);
-        if (e.isCancelled()) throw new Exception("Event is already cancelled.");
-        e.setCancelled(true);
+        events.remove(id);
     }
 
     // --- Student operations ---
@@ -67,7 +69,6 @@ public class EventManager {
      */
     public String registerStudent(int eventId, String studentId) throws Exception {
         Event e = getEventOrThrow(eventId);
-        if (e.isCancelled()) throw new Exception("Cannot register for a cancelled event.");
         String result = e.registerStudent(studentId);
         if (result.equals("DUPLICATE")) {
             throw new Exception("Student " + studentId + " is already registered/waitlisted for this event.");
@@ -126,11 +127,7 @@ public class EventManager {
      * Returns all active (non-cancelled) events.
      */
     public List<Event> getActiveEvents() {
-        List<Event> active = new ArrayList<>();
-        for (Event e : events.values()) {
-            if (!e.isCancelled()) active.add(e);
-        }
-        return active;
+        return new ArrayList<>(events.values());
     }
 
     /**

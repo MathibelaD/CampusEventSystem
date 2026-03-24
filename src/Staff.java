@@ -17,7 +17,7 @@ public class Staff extends User {
         System.out.println("5. View Participants & Waitlist");
         System.out.println("6. Sort Events");
         System.out.println("7. Search Events");
-        System.out.println("8. Save & Exit");
+        System.out.println("8. Exit");
         System.out.print("Select option: ");
     }
 }

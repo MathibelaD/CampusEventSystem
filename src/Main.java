@@ -43,7 +43,7 @@ public class Main {
      */
     private static User selectRole() {
         System.out.println("========================================");
-        System.out.println(" CAMPUS EVENT MANAGEMENT SYSTEM");
+        System.out.println("Welcome to Richfield Campus Management System");
         System.out.println("========================================");
         System.out.println("Select your role:");
         System.out.println("1. Staff");
@@ -87,7 +87,7 @@ public class Main {
                     case 5: viewParticipants(); break;
                     case 6: sortEvents(); break;
                     case 7: searchEvents(); break;
-                    case 8: saveAndExit(); running = false; break;
+                    case 8: exit(); running = false; break;
                     default: System.out.println("Invalid option.");
                 }
             } catch (NumberFormatException e) {
@@ -155,6 +155,7 @@ public class Main {
             }
 
             manager.createEvent(id, name, date, time, location, max);
+            DataPersistence.saveData(manager.getEvents());
             System.out.println("Event created successfully!");
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
@@ -165,17 +166,45 @@ public class Main {
         try {
             System.out.print("Enter Event ID to update: ");
             int id = Integer.parseInt(scanner.nextLine().trim());
+
             System.out.print("New Event Name (press Enter to skip): ");
             String name = scanner.nextLine().trim();
+
+            System.out.print("New Event Date (dd/MM/yyyy, press Enter to skip): ");
+            String date = scanner.nextLine().trim();
+            if (!date.isEmpty()) {
+                DateTimeFormatter dateFmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                while (true) {
+                    try { LocalDate.parse(date, dateFmt); break; } catch (DateTimeParseException e) {
+                        System.out.println("Error: Invalid date format. Use dd/MM/yyyy. Try again.");
+                        System.out.print("New Event Date (dd/MM/yyyy): ");
+                        date = scanner.nextLine().trim();
+                    }
+                }
+            }
+
             System.out.print("New Event Time (HH:mm, press Enter to skip): ");
             String time = scanner.nextLine().trim();
+            if (!time.isEmpty()) {
+                DateTimeFormatter timeFmt = DateTimeFormatter.ofPattern("HH:mm");
+                while (true) {
+                    try { LocalTime.parse(time, timeFmt); break; } catch (DateTimeParseException e) {
+                        System.out.println("Error: Invalid time format. Use HH:mm. Try again.");
+                        System.out.print("New Event Time (HH:mm): ");
+                        time = scanner.nextLine().trim();
+                    }
+                }
+            }
+
             System.out.print("New Location (press Enter to skip): ");
             String location = scanner.nextLine().trim();
 
             manager.updateEvent(id,
                 name.isEmpty() ? null : name,
+                date.isEmpty() ? null : date,
                 time.isEmpty() ? null : time,
                 location.isEmpty() ? null : location);
+            DataPersistence.saveData(manager.getEvents());
             System.out.println("Event updated successfully!");
         } catch (NumberFormatException e) {
             System.out.println("Error: Please enter a valid Event ID.");
@@ -189,7 +218,8 @@ public class Main {
             System.out.print("Enter Event ID to cancel: ");
             int id = Integer.parseInt(scanner.nextLine().trim());
             manager.cancelEvent(id);
-            System.out.println("Event cancelled successfully.");
+            DataPersistence.saveData(manager.getEvents());
+            System.out.println("Event removed successfully.");
         } catch (NumberFormatException e) {
             System.out.println("Error: Please enter a valid Event ID.");
         } catch (Exception e) {
@@ -255,7 +285,7 @@ public class Main {
                     case 3: cancelRegistration(student); break;
                     case 4: viewMyStatus(student); break;
                     case 5: searchEvents(); break;
-                    case 6: saveAndExit(); running = false; break;
+                    case 6: exit(); running = false; break;
                     default: System.out.println("Invalid option.");
                 }
             } catch (NumberFormatException e) {
@@ -343,12 +373,7 @@ public class Main {
         }
     }
 
-    private static void saveAndExit() {
-        try {
-            DataPersistence.saveData(manager.getEvents());
-            System.out.println("Data saved successfully. Goodbye!");
-        } catch (IOException e) {
-            System.out.println("Error saving data: " + e.getMessage());
-        }
+    private static void exit() {
+        System.out.println("Goodbye!");
     }
 }

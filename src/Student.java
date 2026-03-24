@@ -15,7 +15,7 @@ public class Student extends User {
         System.out.println("3. Cancel Registration");
         System.out.println("4. View My Registration Status");
         System.out.println("5. Search Events");
-        System.out.println("6. Save & Exit");
+        System.out.println("6. Exit");
         System.out.print("Select option: ");
     }
 }
