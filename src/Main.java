@@ -98,9 +98,13 @@ public class Main {
 
     private static void createEvent() {
         try {
-            int id = 1;
-            for (int key : manager.getEvents().keySet()) { if (key >= id) id = key + 1; }
-            System.out.println("Auto-generated Event ID: " + String.format("%02d", id));
+            int id;
+            while (true) {
+                System.out.print("Enter Event ID (unique integer): ");
+                try { id = Integer.parseInt(scanner.nextLine().trim()); break; } catch (NumberFormatException e) {
+                    System.out.println("Error: Event ID must be a valid integer. Try again.");
+                }
+            }
 
             String name;
             while (true) {
