@@ -1,12 +1,14 @@
-/**
- * Staff user — can create, update, cancel events and view participants.
- */
+// Staff class - extends User
+// Staff members can create, update, cancel events and view participants
 public class Staff extends User {
 
+    // Constructor - calls the parent (User) constructor with "Staff" as the role
     public Staff(String userId, String name) {
         super(userId, name, "Staff");
     }
 
+    // Displays the staff menu options
+    // This overrides the abstract method from User (polymorphism)
     @Override
     public void displayMenu() {
         System.out.println("\n===== STAFF MENU =====");

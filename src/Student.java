@@ -1,12 +1,14 @@
-/**
- * Student user — can view events, register, cancel registration, view status.
- */
+// Student class - extends User
+// Students can view events, register, cancel registration, and check their status
 public class Student extends User {
 
+    // Constructor - calls the parent (User) constructor with "Student" as the role
     public Student(String userId, String name) {
         super(userId, name, "Student");
     }
 
+    // Displays the student menu options
+    // This overrides the abstract method from User (polymorphism)
     @Override
     public void displayMenu() {
         System.out.println("\n===== STUDENT MENU =====");

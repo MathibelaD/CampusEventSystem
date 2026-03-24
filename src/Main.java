@@ -5,32 +5,34 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
 
-/**
- * Main entry point for the Campus Event Management System.
- * Handles role selection and menu-driven console interaction.
- */
+// This is the main class that runs the whole program
+// It handles the menus for staff and students
 public class Main {
 
+    // Scanner to read user input from the console
     private static Scanner scanner = new Scanner(System.in);
+    // EventManager handles all the event logic (create, update, delete, etc.)
     private static EventManager manager;
 
     public static void main(String[] args) {
-        // Load persisted data on startup
+        // Try to load any previously saved events from the file
         Map<Integer, Event> events;
         try {
             events = DataPersistence.loadData();
             System.out.println("Data loaded successfully.");
         } catch (IOException e) {
+            // If no file exists, just start with an empty list
             events = new LinkedHashMap<>();
             System.out.println("No previous data found. Starting fresh.");
         }
+        // Create the event manager with the loaded (or empty) events
         manager = new EventManager(events);
 
-        // Role selection
+        // Ask the user if they are staff or student
         User user = selectRole();
         System.out.println("\nWelcome, " + user.getName() + " (" + user.getRole() + ")");
 
-        // Main menu loop based on role
+        // Show the correct menu depending on the role
         if (user instanceof Staff) {
             staffMenu();
         } else {
@@ -38,9 +40,7 @@ public class Main {
         }
     }
 
-    /**
-     * Prompts user to select a role and enter their details.
-     */
+    // This method asks the user to pick their role and enter their details
     private static User selectRole() {
         System.out.println("========================================");
         System.out.println("Welcome to Richfield Campus Management System");
@@ -49,6 +49,7 @@ public class Main {
         System.out.println("1. Staff");
         System.out.println("2. Student");
 
+        // Keep asking until they pick 1 or 2
         int choice = 0;
         while (choice != 1 && choice != 2) {
             System.out.print("Enter choice (1 or 2): ");
@@ -60,25 +61,28 @@ public class Main {
             }
         }
 
+        // Get the user's ID and name
         System.out.print("Enter your User ID: ");
         String userId = scanner.nextLine().trim();
         System.out.print("Enter your Name: ");
         String name = scanner.nextLine().trim();
 
+        // Return the correct type of user based on their choice
         if (choice == 1) return new Staff(userId, name);
         return new Student(userId, name);
     }
 
     // ==================== STAFF MENU ====================
 
+    // This method shows the staff menu and handles their choices
     private static void staffMenu() {
-        Staff staff = null; // menu display only
-        staff = new Staff("", "");
+        Staff staff = new Staff("", ""); // just used to display the menu
         boolean running = true;
         while (running) {
             staff.displayMenu();
             try {
                 int choice = Integer.parseInt(scanner.nextLine().trim());
+                // Call the right method based on what the staff picked
                 switch (choice) {
                     case 1: createEvent(); break;
                     case 2: updateEvent(); break;
@@ -96,8 +100,11 @@ public class Main {
         }
     }
 
+    // This method lets staff create a new event
+    // Each input is validated immediately and keeps asking until valid
     private static void createEvent() {
         try {
+            // Get the event ID - must be a number
             int id;
             while (true) {
                 System.out.print("Enter Event ID (unique integer): ");
@@ -106,6 +113,7 @@ public class Main {
                 }
             }
 
+            // Get the event name - can't be empty
             String name;
             while (true) {
                 System.out.print("Enter Event Name: ");
@@ -114,6 +122,7 @@ public class Main {
                 System.out.println("Error: Event name cannot be empty. Try again.");
             }
 
+            // Get the date - must match dd/MM/yyyy format
             DateTimeFormatter dateFmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             String date;
             while (true) {
@@ -124,6 +133,7 @@ public class Main {
                 }
             }
 
+            // Get the time - must match HH:mm format
             DateTimeFormatter timeFmt = DateTimeFormatter.ofPattern("HH:mm");
             String time;
             while (true) {
@@ -134,6 +144,7 @@ public class Main {
                 }
             }
 
+            // Get the location - can't be empty
             String location;
             while (true) {
                 System.out.print("Enter Location: ");
@@ -142,6 +153,7 @@ public class Main {
                 System.out.println("Error: Location cannot be empty. Try again.");
             }
 
+            // Get max participants - must be a positive number
             int max;
             while (true) {
                 System.out.print("Enter Maximum Participants: ");
@@ -154,6 +166,7 @@ public class Main {
                 }
             }
 
+            // Create the event and save it to the file right away
             manager.createEvent(id, name, date, time, location, max);
             DataPersistence.saveData(manager.getEvents());
             System.out.println("Event created successfully!");
@@ -162,14 +175,18 @@ public class Main {
         }
     }
 
+    // This method lets staff update an existing event
+    // They can skip fields by pressing Enter
     private static void updateEvent() {
         try {
             System.out.print("Enter Event ID to update: ");
             int id = Integer.parseInt(scanner.nextLine().trim());
 
+            // Get new name (or skip)
             System.out.print("New Event Name (press Enter to skip): ");
             String name = scanner.nextLine().trim();
 
+            // Get new date (or skip) - validates format if entered
             System.out.print("New Event Date (dd/MM/yyyy, press Enter to skip): ");
             String date = scanner.nextLine().trim();
             if (!date.isEmpty()) {
@@ -183,6 +200,7 @@ public class Main {
                 }
             }
 
+            // Get new time (or skip) - validates format if entered
             System.out.print("New Event Time (HH:mm, press Enter to skip): ");
             String time = scanner.nextLine().trim();
             if (!time.isEmpty()) {
@@ -196,9 +214,11 @@ public class Main {
                 }
             }
 
+            // Get new location (or skip)
             System.out.print("New Location (press Enter to skip): ");
             String location = scanner.nextLine().trim();
 
+            // Update the event and save changes to file
             manager.updateEvent(id,
                 name.isEmpty() ? null : name,
                 date.isEmpty() ? null : date,
@@ -213,10 +233,12 @@ public class Main {
         }
     }
 
+    // This method removes an event completely from the list
     private static void cancelEvent() {
         try {
             System.out.print("Enter Event ID to cancel: ");
             int id = Integer.parseInt(scanner.nextLine().trim());
+            // Remove the event and save the updated list
             manager.cancelEvent(id);
             DataPersistence.saveData(manager.getEvents());
             System.out.println("Event removed successfully.");
@@ -227,16 +249,30 @@ public class Main {
         }
     }
 
+    // This method shows all events with an option to sort them first
     private static void viewAllEvents() {
         List<Event> all = manager.getAllEvents();
         if (all.isEmpty()) {
             System.out.println("No events found.");
             return;
         }
+        // Ask the user how they want to sort the events
+        System.out.println("Sort by: 1. Event Name  2. Event Date  3. None");
+        System.out.print("Select option: ");
+        try {
+            int choice = Integer.parseInt(scanner.nextLine().trim());
+            if (choice == 1) all = manager.sortByName();
+            else if (choice == 2) all = manager.sortByDate();
+            else if (choice != 3) { System.out.println("Invalid option."); return; }
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid option. Showing unsorted.");
+        }
+        // Print out all the events
         System.out.println("\n--- All Events ---");
         for (Event e : all) System.out.println(e);
     }
 
+    // This method shows the participants and waitlist for a specific event
     private static void viewParticipants() {
         try {
             System.out.print("Enter Event ID: ");
@@ -246,6 +282,7 @@ public class Main {
                 System.out.println("Event not found.");
                 return;
             }
+            // Display the registered students and waitlist
             System.out.println("\n--- " + e.getEventName() + " ---");
             System.out.println("Registered Participants: " + e.getRegisteredStudents());
             System.out.println("Waitlist: " + new ArrayList<>(e.getWaitlist()));
@@ -254,6 +291,7 @@ public class Main {
         }
     }
 
+    // This method sorts events by name or date and displays them
     private static void sortEvents() {
         System.out.println("Sort by: 1. Event Name  2. Event Date");
         System.out.print("Select option: ");
@@ -273,6 +311,7 @@ public class Main {
 
     // ==================== STUDENT MENU ====================
 
+    // This method shows the student menu and handles their choices
     private static void studentMenu(Student student) {
         boolean running = true;
         while (running) {
@@ -294,6 +333,7 @@ public class Main {
         }
     }
 
+    // Shows all events that are currently available
     private static void viewAvailableEvents() {
         List<Event> active = manager.getActiveEvents();
         if (active.isEmpty()) {
@@ -304,11 +344,13 @@ public class Main {
         for (Event e : active) System.out.println(e);
     }
 
+    // Lets a student register for an event by entering the event ID
     private static void registerForEvent(Student student) {
         try {
             System.out.print("Enter Event ID to register: ");
             int id = Integer.parseInt(scanner.nextLine().trim());
             String result = manager.registerStudent(id, student.getUserId());
+            // Check if they got registered or put on the waitlist
             if (result.equals("REGISTERED")) {
                 System.out.println("You have been successfully registered for the event!");
             } else {
@@ -321,6 +363,7 @@ public class Main {
         }
     }
 
+    // Lets a student cancel their registration for an event
     private static void cancelRegistration(Student student) {
         try {
             System.out.print("Enter Event ID to cancel registration: ");
@@ -333,6 +376,7 @@ public class Main {
         }
     }
 
+    // Shows the student which events they are registered or waitlisted for
     private static void viewMyStatus(Student student) {
         List<String> statuses = manager.getStudentStatuses(student.getUserId());
         if (statuses.isEmpty()) {
@@ -345,6 +389,7 @@ public class Main {
 
     // ==================== SHARED ====================
 
+    // Lets both staff and students search for events by name or date
     private static void searchEvents() {
         System.out.println("Search by: 1. Event Name  2. Event Date");
         System.out.print("Select option: ");
@@ -362,6 +407,7 @@ public class Main {
                 return;
             }
 
+            // Show results or tell the user nothing was found
             if (results.isEmpty()) {
                 System.out.println("No events found matching your search.");
             } else {
@@ -373,6 +419,7 @@ public class Main {
         }
     }
 
+    // Just prints goodbye and the program ends
     private static void exit() {
         System.out.println("Goodbye!");
     }
