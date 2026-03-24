@@ -91,7 +91,7 @@ public class Main {
                     case 5: viewParticipants(); break;
                     case 6: sortEvents(); break;
                     case 7: searchEvents(); break;
-                    case 8: exit(); running = false; break;
+                    case 8: exit("Staff"); running = false; break;
                     default: System.out.println("Invalid option.");
                 }
             } catch (NumberFormatException e) {
@@ -324,7 +324,7 @@ public class Main {
                     case 3: cancelRegistration(student); break;
                     case 4: viewMyStatus(student); break;
                     case 5: searchEvents(); break;
-                    case 6: exit(); running = false; break;
+                    case 6: exit("Student"); running = false; break;
                     default: System.out.println("Invalid option.");
                 }
             } catch (NumberFormatException e) {
@@ -419,8 +419,8 @@ public class Main {
         }
     }
 
-    // Just prints goodbye and the program ends
-    private static void exit() {
-        System.out.println("Goodbye!");
+    // Prints which menu the user is leaving and says goodbye
+    private static void exit(String role) {
+        System.out.println("Exiting " + role + " Menu. Goodbye!");
     }
 }
