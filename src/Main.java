@@ -356,6 +356,7 @@ public class Main {
             } else {
                 System.out.println("Event is full. You have been placed on the waitlist.");
             }
+            DataPersistence.saveData(manager.getEvents());
         } catch (NumberFormatException e) {
             System.out.println("Error: Please enter a valid Event ID.");
         } catch (Exception e) {
@@ -369,6 +370,7 @@ public class Main {
             System.out.print("Enter Event ID to cancel registration: ");
             int id = Integer.parseInt(scanner.nextLine().trim());
             manager.cancelStudentRegistration(id, student.getUserId());
+            DataPersistence.saveData(manager.getEvents());
         } catch (NumberFormatException e) {
             System.out.println("Error: Please enter a valid Event ID.");
         } catch (Exception e) {
